@@ -20,9 +20,10 @@ step "example" {
 
 | Name | Type | Required | Description |
 | --- | --- | --- | --- |
-| `content` | string | Yes | Exact content of the file. |
+| `content` | string | No | Exact content of the file. Set this or content_wo. |
+| `content_wo` | string | No | Exact content of the file, kept out of state: state records only content_hmac. Use it for secrets. Set this or content. |
 | `group` | string | No | Owning group. Left as is when unset. |
-| `mode` | string | No | Octal permissions. Defaults to "0644". |
+| `mode` | string | No | Octal permissions. Defaults to "0644", or "0600" with content_wo. |
 | `on_remove` | string | No | What happens on the host when this resource is removed: "forget" (default) leaves the file, "delete" removes it. |
 | `owner` | string | No | Owning user. Left as is when unset. |
 | `path` | string | Yes | Absolute path of the file on the host. |
@@ -33,6 +34,7 @@ Conn3x sets these; reference them as `conn3x_file.<circuit>__<step>["<host>"].<n
 
 | Name | Type | Description |
 | --- | --- | --- |
+| `content_hmac` | string | HMAC-SHA256 of content_wo, keyed by CONN3X_HMAC_KEY or ~/.config/conn3x/hmac.key. Null when content is used. |
 | `sha256` | string | SHA-256 of the content, hex encoded. |
 
 A step lowers to the `conn3x_file` resource, one instance per host, and connects with its circuit's `ssh` block.
